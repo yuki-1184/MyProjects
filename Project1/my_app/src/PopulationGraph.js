@@ -109,6 +109,9 @@ function createOptions(series) {
     title: {
       text: "人口推移（都道府県別）",
     },
+    subtitle: {
+      text: "1965-2045年 (5年毎)",
+    },
     xAxis: {
       title: {
         text: "年度",
@@ -132,7 +135,7 @@ function createOptions(series) {
       },
     },
     legend: {
-      layout: "vertical",
+      layout: "proximate",
       align: "right",
       verticalAlign: "middle",
       itemStyle: {
@@ -191,8 +194,13 @@ export default function PopulationGraph({ checkedPrefs, populations }) {
   // }
 
   return (
-    <div>
-      <HighchartsReact highcharts={Highcharts} options={options} />
-    </div>
+    <>
+      <div>
+        <br></br>
+        <br></br>
+        <br></br>
+        <HighchartsReact highcharts={Highcharts} options={options} />
+      </div>
+    </>
   );
 }
