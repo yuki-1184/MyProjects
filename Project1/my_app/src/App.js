@@ -40,8 +40,14 @@ function App() {
     const storedPrefectures = JSON.parse(
       localStorage.getItem(LOCAL_STORAGE_KEY)
     );
+    const storedPopulations = JSON.parse(
+      localStorage.getItem(LOCAL_STORAGE_KEY2)
+    );
     if (storedPrefectures) {
       setPrefectures(storedPrefectures);
+    }
+    if (storedPopulations) {
+      setPopulations(storedPopulations);
     } else {
       fetchAPI().then((prefData) => {
         setPrefectures(

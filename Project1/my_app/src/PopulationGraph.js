@@ -53,56 +53,100 @@ const population = [
   },
 ];
 
-const options = {
-  title: {
-    text: "人口推移（都道府県別）",
-  },
-  xAxis: {
+// const options = {
+//   title: {
+//     text: "人口推移（都道府県別）",
+//   },
+//   xAxis: {
+//     title: {
+//       text: "年度",
+//     },
+//     categories: [
+//       1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015,
+//       2020, 2025, 2030, 2035, 2040, 2045,
+//     ],
+//     gridLineWidth: 1,
+//     tickInterval: 3,
+//     crosshair: true,
+//   },
+//   yAxis: {
+//     title: {
+//       text: "人口数（万人）",
+//     },
+//     labels: {
+//       formatter() {
+//         return `${this.value / 10000}`;
+//       },
+//     },
+//   },
+//   legend: {
+//     layout: "vertical",
+//     align: "right",
+//     verticalAlign: "middle",
+//     itemStyle: {
+//       cursor: "default",
+//       fontWeight: "normal",
+//     },
+//     itemHoverStyle: {
+//       fontWeight: "bold",
+//     },
+//     itemMarginBottom: 4,
+//   },
+//   series: [
+//     {
+//       name: population[0].prefName,
+//       data: iterPopu(population[0]),
+//     },
+//     {
+//       name: population[1].prefName,
+//       data: iterPopu(population[1]),
+//     },
+//   ],
+// };
+
+function createOptions(series) {
+  return {
     title: {
-      text: "年度",
+      text: "人口推移（都道府県別）",
     },
-    categories: [
-      1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015,
-      2020, 2025, 2030, 2035, 2040, 2045,
-    ],
-    gridLineWidth: 1,
-    tickInterval: 3,
-    crosshair: true,
-  },
-  yAxis: {
-    title: {
-      text: "人口数（万人）",
+    xAxis: {
+      title: {
+        text: "年度",
+      },
+      categories: [
+        1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015,
+        2020, 2025, 2030, 2035, 2040, 2045,
+      ],
+      gridLineWidth: 1,
+      tickInterval: 3,
+      crosshair: true,
     },
-    labels: {
-      formatter() {
-        return `${this.value / 10000}`;
+    yAxis: {
+      title: {
+        text: "人口数（万人）",
+      },
+      labels: {
+        formatter() {
+          return `${this.value / 10000}`;
+        },
       },
     },
-  },
-  legend: {
-    layout: "vertical",
-    align: "right",
-    verticalAlign: "middle",
-    itemStyle: {
-      cursor: "default",
-      fontWeight: "normal",
+    legend: {
+      layout: "vertical",
+      align: "right",
+      verticalAlign: "middle",
+      itemStyle: {
+        cursor: "default",
+        fontWeight: "normal",
+      },
+      itemHoverStyle: {
+        fontWeight: "bold",
+      },
+      itemMarginBottom: 4,
     },
-    itemHoverStyle: {
-      fontWeight: "bold",
-    },
-    itemMarginBottom: 4,
-  },
-  series: [
-    {
-      name: population[0].prefName,
-      data: iterPopu(population[0]),
-    },
-    {
-      name: population[1].prefName,
-      data: iterPopu(population[1]),
-    },
-  ],
-};
+    series: series,
+  };
+}
 
 function iterPopu(population) {
   const data = [];
@@ -112,8 +156,40 @@ function iterPopu(population) {
   return data;
 }
 
+function createSeries(checkedPrefs, populations) {
+  let series = [];
+  //   const newPopulations = populations.find(popu => popu.prefCode ===)
+  //   console.log(checkedPrefs);
+  //   console.log(populations);
+  if (checkedPrefs.length === 0) {
+    return [{ data: [], showInLegend: false }];
+  }
+  checkedPrefs.forEach((pref) => {
+    let popu_data = [];
+    const cur_pref = populations[pref.prefCode];
+    for (let i = 0; i < cur_pref.popuData.length; i++) {
+      popu_data.push(cur_pref.popuData[i].value);
+    }
+    series.push({ name: pref.prefName, data: popu_data });
+  });
+  //   console.log(series);
+  return series;
+}
+
 export default function PopulationGraph({ checkedPrefs, populations }) {
-  console.log(checkedPrefs);
+  const series = createSeries(checkedPrefs, populations);
+  console.log(series);
+  const options = createOptions(series);
+  console.log(options);
+  let checked1 = "hello";
+  let checked2 = "hello";
+  // if (checkedPrefs.length > 0) {
+  //   checked1 = checkedPrefs[0].prefName;
+  // }
+  // if (checkedPrefs.length > 2) {
+  //   checked2 = checkedPrefs[2].prefName;
+  // }
+
   return (
     <div>
       <HighchartsReact highcharts={Highcharts} options={options} />
