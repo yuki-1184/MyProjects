@@ -2,7 +2,6 @@ import React from "react";
 import "./CheckBox.css";
 
 export default function Prefecture({ prefecture, togglePref }) {
-  console.log("hello");
   function handleChange() {
     togglePref(prefecture.prefCode);
   }
