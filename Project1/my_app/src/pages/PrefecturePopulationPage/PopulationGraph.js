@@ -58,10 +58,12 @@ function createSeries(checkedPrefs, populations) {
   checkedPrefs.forEach((pref) => {
     let popu_data = [];
     const cur_pref = populations[pref.prefCode];
-    for (let i = 0; i < cur_pref.popuData.length; i++) {
-      popu_data.push(cur_pref.popuData[i].value);
+    if (cur_pref) {
+      for (let i = 0; i < cur_pref.popuData.length; i++) {
+        popu_data.push(cur_pref.popuData[i].value);
+      }
+      series.push({ name: pref.prefName, data: popu_data });
     }
-    series.push({ name: pref.prefName, data: popu_data });
   });
 
   return series;

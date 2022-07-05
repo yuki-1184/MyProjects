@@ -1,30 +1,36 @@
 import React, { useState, useEffect } from "react";
 import ShowPrefectures from "./ShowPrefectures";
 import PopulationGraph from "./PopulationGraph";
+import "./CheckBox.css";
+import { Navigate } from "react-router-dom";
 
 const LOCAL_STORAGE_KEY = "pref.prefData";
 const LOCAL_STORAGE_KEY2 = "popu.populationData";
 const RESAS_ENDPOINT = "https://opendata.resas-portal.go.jp";
 
-function Profile() {
+function Profile({ apiKey }) {
+  // console.log("successful redirection to profile");
+  // console.log(apiKey);
   const [prefectures, setPrefectures] = useState([]);
   const [populations, setPopulations] = useState({});
   const [checkedPrefs, setCheckedPrefs] = useState([]);
 
   useEffect(() => {
+    console.log("first useEffect");
+    console.log(apiKey);
     const storedPrefectures = JSON.parse(
       localStorage.getItem(LOCAL_STORAGE_KEY)
     );
     const storedPopulations = JSON.parse(
       localStorage.getItem(LOCAL_STORAGE_KEY2)
     );
-    if (storedPrefectures) {
+    if (storedPrefectures.length > 0) {
       setPrefectures(storedPrefectures);
     }
-    if (storedPopulations) {
+    if (storedPopulations.length > 0) {
       setPopulations(storedPopulations);
     } else {
-      fetchPrefecture().then((prefData) => {
+      fetchPrefecture(apiKey).then((prefData) => {
         setPrefectures(
           prefData.map((prefecture) => {
             return {
@@ -36,7 +42,7 @@ function Profile() {
         );
         let promises = [];
         prefData.forEach((pref) => {
-          promises.push(fetchPopulation(pref.prefCode));
+          promises.push(fetchPopulation(apiKey, pref.prefCode));
         });
         Promise.all(promises).then((popuData) => {
           let populations = {};
@@ -79,29 +85,31 @@ function Profile() {
   return (
     <div>
       <h1>都道府県</h1>
-      <ShowPrefectures prefectures={prefectures} togglePref={togglePref} />
+      <div className="PrefecturesCheckBox">
+        <ShowPrefectures prefectures={prefectures} togglePref={togglePref} />
+      </div>
       <PopulationGraph checkedPrefs={checkedPrefs} populations={populations} />
     </div>
   );
 }
 
-function fetchPrefecture() {
+function fetchPrefecture(apiKey) {
   const url = `${RESAS_ENDPOINT}/api/v1/prefectures`;
   const request = new Request(url, {
     method: "GET",
-    headers: { "X-API-KEY": "F6uHbU8bg4XP9sJBiZVGg3KL3vroy4Lyj8XLOHUE" },
+    headers: { "X-API-KEY": apiKey },
   });
   return fetch(request)
     .then((response) => response.json())
     .then((data) => data.result);
 }
 
-async function fetchPopulation(prefCode) {
+async function fetchPopulation(apiKey, prefCode) {
   const code = prefCode.toString();
   const url = `${RESAS_ENDPOINT}/api/v1/population/composition/perYear?prefCode=${code}`;
   const request = new Request(url, {
     method: "GET",
-    headers: { "X-API-KEY": "F6uHbU8bg4XP9sJBiZVGg3KL3vroy4Lyj8XLOHUE" },
+    headers: { "X-API-KEY": apiKey },
   });
   const response = await fetch(request);
   if (!response.ok) {
