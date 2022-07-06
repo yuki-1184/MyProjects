@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import "./index.css";
-// import RequireApiClient from "src/RequireApiClient";
 
 const RESAS_ENDPOINT = "https://opendata.resas-portal.go.jp";
-// F6uHbU8bg4XP9sJBiZVGg3KL3vroy4Lyj8XLOHUE
 
 export default function Login({ changeApiKey }) {
   const apiKeyIinput = useRef();
@@ -39,15 +37,6 @@ export default function Login({ changeApiKey }) {
         setErrMsg("Error! Please Check Your Api Key!");
       }
     });
-    // console.log(isValid);
-    // if (isValid) {
-    //   console.log("success");
-    //   setSuccess(true);
-    // } else {
-    //   setErrMsg("Api-Key is incorrect!");
-    // }
-    // setApiKey("");
-    console.log(success);
   };
 
   return (
@@ -88,12 +77,6 @@ export default function Login({ changeApiKey }) {
         </div>
       )}
     </>
-
-    // <div>
-    //   <h1>API-KEYを入力してください</h1>
-    //   <input ref={apiKeyIinput} type="text" placeholder="RESAS-API-KEY" />
-    //   <button onClick={handleLogin}>Login</button>
-    // </div>
   );
 }
 
@@ -104,10 +87,9 @@ async function verifyApiKey(apiKey) {
     method: "GET",
     headers: { "X-API-KEY": apiKey },
   });
+
   const response = await fetch(request);
-  //   console.log(response);
   const json = await response.json();
-  //   console.log(json);
   if (json.statusCode === "403") {
     return false;
   }
